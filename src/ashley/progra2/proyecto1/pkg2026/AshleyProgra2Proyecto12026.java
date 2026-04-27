@@ -8,13 +8,23 @@ package ashley.progra2.proyecto1.pkg2026;
  *
  * @author ashley
  */
+
+import javax.swing.SwingUtilities;
+
 public class AshleyProgra2Proyecto12026 {
 
     /**
      * @param args the command line arguments
      */
+    
     public static void main(String[] args) {
-        // TODO code application logic here
+        
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new MenusGUI();
+            }
+        });
+        
     }
     
 }
