@@ -92,7 +92,7 @@ public class Menus {
     }
 
     // =========================================================
-    // JUGAR XIANGQUI
+    // JUGAR XIANGQI
     // =========================================================
 
     public ArrayList<Player> obtenerOponentesDisponibles() {
