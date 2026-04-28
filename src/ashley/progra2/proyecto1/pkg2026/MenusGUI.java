@@ -37,7 +37,7 @@ public class MenusGUI extends JFrame {
         cardLayout = new CardLayout();
         contenedor = new JPanel(cardLayout);
 
-        setTitle("Xiangqi");
+        setTitle("Xiangqui");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1200, 700);
         setMinimumSize(new Dimension(900, 500));
@@ -72,7 +72,7 @@ public class MenusGUI extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JLabel titulo = new JLabel("Xiangqi");
+        JLabel titulo = new JLabel("Xiangqui");
         titulo.setForeground(Color.WHITE);
         titulo.setFont(new Font("Open Sans", Font.BOLD, 42));
 
@@ -123,7 +123,7 @@ public class MenusGUI extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JLabel tituloJuego = new JLabel("Xiangqi");
+        JLabel tituloJuego = new JLabel("Xiangqui");
         tituloJuego.setForeground(Color.WHITE);
         tituloJuego.setFont(new Font("Open Sans", Font.BOLD, 42));
 
@@ -228,7 +228,7 @@ public class MenusGUI extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JLabel tituloJuego = new JLabel("Xiangqi");
+        JLabel tituloJuego = new JLabel("Xiangqui");
         tituloJuego.setForeground(Color.WHITE);
         tituloJuego.setFont(new Font("Open Sans", Font.BOLD, 42));
 
@@ -333,7 +333,7 @@ public class MenusGUI extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JLabel titulo = new JLabel("Xiangqi");
+        JLabel titulo = new JLabel("Xiangqui");
         titulo.setForeground(Color.WHITE);
         titulo.setFont(new Font("Open Sans", Font.BOLD, 42));
 
@@ -388,7 +388,7 @@ public class MenusGUI extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JLabel tituloJuego = new JLabel("Xiangqi");
+        JLabel tituloJuego = new JLabel("Xiangqui");
         tituloJuego.setForeground(Color.WHITE);
         tituloJuego.setFont(new Font("Open Sans", Font.BOLD, 42));
 
@@ -456,7 +456,7 @@ public class MenusGUI extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JLabel tituloJuego = new JLabel("Xiangqi");
+        JLabel tituloJuego = new JLabel("Xiangqui");
         tituloJuego.setForeground(Color.WHITE);
         tituloJuego.setFont(new Font("Open Sans", Font.BOLD, 42));
 
@@ -561,7 +561,7 @@ public class MenusGUI extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JLabel tituloJuego = new JLabel("Xiangqi");
+        JLabel tituloJuego = new JLabel("Xiangqui");
         tituloJuego.setForeground(Color.WHITE);
         tituloJuego.setFont(new Font("Open Sans", Font.BOLD, 42));
 
@@ -664,7 +664,7 @@ public class MenusGUI extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JLabel tituloJuego = new JLabel("Xiangqi");
+        JLabel tituloJuego = new JLabel("Xiangqui");
         tituloJuego.setForeground(Color.WHITE);
         tituloJuego.setFont(new Font("Open Sans", Font.BOLD, 42));
 
@@ -730,7 +730,7 @@ public class MenusGUI extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JLabel tituloJuego = new JLabel("Xiangqi");
+        JLabel tituloJuego = new JLabel("Xiangqui");
         tituloJuego.setForeground(Color.WHITE);
         tituloJuego.setFont(new Font("Open Sans", Font.BOLD, 42));
 
@@ -834,7 +834,7 @@ public class MenusGUI extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JLabel tituloJuego = new JLabel("Xiangqi");
+        JLabel tituloJuego = new JLabel("Xiangqui");
         tituloJuego.setForeground(Color.WHITE);
         tituloJuego.setFont(new Font("Open Sans", Font.BOLD, 42));
 
@@ -962,7 +962,7 @@ public class MenusGUI extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JLabel tituloJuego = new JLabel("Xiangqi");
+        JLabel tituloJuego = new JLabel("Xiangqui");
         tituloJuego.setForeground(Color.WHITE);
         tituloJuego.setFont(new Font("Open Sans", Font.BOLD, 42));
 
