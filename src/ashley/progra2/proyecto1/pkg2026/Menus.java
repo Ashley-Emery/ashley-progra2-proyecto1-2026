@@ -38,6 +38,7 @@ public class Menus {
             return "Password incorrecto.";
         }
 
+        player.actualizarFechaIngreso();
         loggedInPlayer = player;
         return "Login exitoso. Ir al MENU PRINCIPAL.";
     }
@@ -507,6 +508,11 @@ public class Menus {
         public void sumarPuntos(int puntosGanados) {
             puntos += puntosGanados;
         }
+
+        public void actualizarFechaIngreso() {
+            this.fechaIngreso = LocalDateTime.now().toString();
+        }
+
     }
 
     // =========================================================
