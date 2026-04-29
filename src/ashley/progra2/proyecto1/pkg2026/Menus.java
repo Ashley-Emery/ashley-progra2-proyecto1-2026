@@ -18,14 +18,9 @@ public class Menus {
     private ArrayList<Player> players;
     private Player loggedInPlayer;
 
-    private static final String PLAYERS_FILE = "players.xia";
-
     public Menus() {
         players = new ArrayList<Player>();
         loggedInPlayer = null;
-
-        resetearArchivoPlayers();
-        cargarPlayers();
     }
 
     // =========================================================
@@ -62,7 +57,6 @@ public class Menus {
 
         Player nuevo = new Player(username, password);
         players.add(nuevo);
-        guardarPlayers();
 
         loggedInPlayer = nuevo;
 
@@ -166,7 +160,6 @@ public class Menus {
 
         ganador.sumarPuntos(3);
         partida.terminarPartida();
-        guardarPlayers();
 
         String mensaje = "[" + partida.getIdPartida() + "] " + ganador.getUsername() + " venció a " + perdedor.getUsername()
                 + ", felicidades has ganado 3 puntos.";
@@ -192,7 +185,6 @@ public class Menus {
 
         ganador.sumarPuntos(3);
         partida.terminarPartida();
-        guardarPlayers();
 
         String mensaje = "[" + partida.getIdPartida() + "] " + jugadorRetirado.getUsername() + " se ha retirado, felicidades "
                 + ganador.getUsername() + ", has ganado 3 puntos.";
@@ -232,7 +224,6 @@ public class Menus {
         }
 
         loggedInPlayer.setPassword(passwordNuevo);
-        guardarPlayers();
 
         return "Password cambiado exitosamente.";
     }
@@ -250,8 +241,6 @@ public class Menus {
 
         loggedInPlayer.setActivo(false);
         borrarArchivoLogsUsuario(usernameEliminado);
-
-        guardarPlayers();
 
         loggedInPlayer = null;
 
@@ -437,51 +426,6 @@ public class Menus {
     }
 
     // =========================================================
-    // ARCHIVO DE PLAYERS
-    // =========================================================
-
-    private void resetearArchivoPlayers() {
-        try {
-            // Esto sobrescribe el archivo con nada, limpiándolo al inicio
-            PrintWriter writer = new PrintWriter(new FileWriter(PLAYERS_FILE, false));
-            writer.print("");
-            writer.close();
-        } catch (IOException e) {
-        }
-    }
-
-    private void guardarPlayers() {
-        try {
-            PrintWriter writer = new PrintWriter(new FileWriter(PLAYERS_FILE));
-
-            for (int i = 0; i < players.size(); i++) {
-                writer.println(players.get(i).toFileString());
-            }
-
-            writer.close();
-        } catch (IOException e) {
-        }
-    }
-
-    private void cargarPlayers() {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(PLAYERS_FILE));
-            String linea;
-
-            while ((linea = reader.readLine()) != null) {
-                Player player = Player.fromFileString(linea);
-
-                if (player != null) {
-                    players.add(player);
-                }
-            }
-
-            reader.close();
-        } catch (IOException e) {
-        }
-    }
-
-    // =========================================================
     // CLASE PLAYER
     // =========================================================
 
@@ -538,26 +482,6 @@ public class Menus {
 
         public void sumarPuntos(int puntosGanados) {
             puntos += puntosGanados;
-        }
-
-        public String toFileString() {
-            return username + "|" + password + "|" + puntos + "|" + fechaIngreso + "|" + activo;
-        }
-
-        public static Player fromFileString(String linea) {
-            try {
-                String[] partes = linea.split("\\|");
-
-                String username = partes[0];
-                String password = partes[1];
-                int puntos = Integer.parseInt(partes[2]);
-                String fechaIngreso = partes[3];
-                boolean activo = Boolean.parseBoolean(partes[4]);
-
-                return new Player(username, password, puntos, fechaIngreso, activo);
-            } catch (Exception e) {
-                return null;
-            }
         }
     }
 
