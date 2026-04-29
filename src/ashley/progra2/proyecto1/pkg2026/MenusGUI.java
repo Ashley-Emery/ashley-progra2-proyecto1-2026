@@ -259,7 +259,7 @@ public class MenusGUI extends JFrame {
 
             String respuesta = menus.login(username, password);
 
-            if (respuesta.equals("Login exitoso. Ir al MENU PRINCIPAL.")) {
+            if (respuesta.equals("Login exitoso.")) {
                 txtUsuario.setText("");
                 txtPassword.setText("");
                 cardLayout.show(contenedor, MENU_PRINCIPAL);
@@ -275,7 +275,7 @@ public class MenusGUI extends JFrame {
                     String respuestaReactivar = menus.reactivarCuenta(username, password);
                     JOptionPane.showMessageDialog(this, respuestaReactivar);
 
-                    if (respuestaReactivar.equals("Cuenta reactivada exitosamente. Ir al MENU PRINCIPAL.")) {
+                    if (respuestaReactivar.equals("Cuenta reactivada exitosamente.")) {
                         txtUsuario.setText("");
                         txtPassword.setText("");
                         cardLayout.show(contenedor, MENU_PRINCIPAL);
