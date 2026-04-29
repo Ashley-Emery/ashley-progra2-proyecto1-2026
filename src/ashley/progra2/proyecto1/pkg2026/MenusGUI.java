@@ -52,6 +52,7 @@ public class MenusGUI extends JFrame {
         contenedor.add(crearMiCuenta(), MI_CUENTA);
         contenedor.add(crearCambiarPassword(), CAMBIAR_PASSWORD);
         contenedor.add(crearEliminarCuenta(), ELIMINAR_CUENTA);
+        contenedor.add(crearDesactivarCuenta(), DESACTIVAR_CUENTA);
         contenedor.add(crearReportes(), REPORTES);
         contenedor.add(crearRankingJugadores(), RANKING_JUGADORES);
         contenedor.add(crearLogsUltimasPartidas(), LOG_ULTIMAS_PARTIDAS);
@@ -670,6 +671,108 @@ public class MenusGUI extends JFrame {
                 JOptionPane.showMessageDialog(this, respuesta);
 
                 if (respuesta.equals("Cuenta eliminada exitosamente.")) {
+                    cardLayout.show(contenedor, MENU_INICIO);
+                }
+            }
+        });
+
+        JPanel panelDerecho = new JPanel(new GridBagLayout());
+        panelDerecho.setOpaque(false);
+
+        GridBagConstraints rGbc = new GridBagConstraints();
+
+        rGbc.gridx = 0;
+        rGbc.gridy = 0;
+        rGbc.anchor = GridBagConstraints.WEST;
+        rGbc.insets = new Insets(0, 0, 25, 0);
+        panelDerecho.add(titulo, rGbc);
+
+        rGbc.gridy = 1;
+        rGbc.insets = new Insets(0, 0, 35, 0);
+        panelDerecho.add(mensaje, rGbc);
+
+        rGbc.gridy = 2;
+        rGbc.anchor = GridBagConstraints.CENTER;
+        rGbc.insets = new Insets(0, 0, 0, 0);
+        panelDerecho.add(btnAceptar, rGbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.55;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 90, 0, 0);
+        panel.add(tituloJuego, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 0.45;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(0, 0, 0, 70);
+        panel.add(panelDerecho, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 0.55;
+        gbc.weighty = 0.0;
+        gbc.anchor = GridBagConstraints.SOUTHWEST;
+        gbc.insets = new Insets(0, 90, 70, 0);
+        panel.add(btnVolver, gbc);
+
+        return panel;
+    }
+
+    // =========================================================
+    // DESACTIVAR CUENTA - CARD LAYOUT
+    // =========================================================
+
+    private JPanel crearDesactivarCuenta() {
+        FondoPanel panel = new FondoPanel("/ashley/progra2/proyecto1/pkg2026/assets/background.png");
+        panel.setLayout(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        JLabel tituloJuego = new JLabel("Xiangqi");
+        tituloJuego.setForeground(Color.WHITE);
+        tituloJuego.setFont(new Font("Open Sans", Font.BOLD, 42));
+
+        JLabel titulo = new JLabel("Desactivar cuenta");
+        titulo.setForeground(new Color(0xffd600));
+        titulo.setFont(new Font("Open Sans", Font.BOLD, 30));
+
+        JLabel mensaje = new JLabel(
+                "<html><div style='width:330px;'>"
+                + "Al desactivar tu cuenta, no podrás iniciar sesión ni acceder "
+                + "a tus datos hasta que la reactives nuevamente.<br><br>"
+                + "¿Deseas continuar?"
+                + "</div></html>"
+        );
+        mensaje.setForeground(Color.WHITE);
+        mensaje.setFont(new Font("Open Sans", Font.BOLD, 18));
+
+        JButton btnVolver = crearBotonColor("Volver", new Color(0xec9c0d));
+        JButton btnAceptar = crearBotonColor("Aceptar", new Color(0xa93407));
+
+        btnVolver.addActionListener(e -> cardLayout.show(contenedor, MI_CUENTA));
+
+        btnAceptar.addActionListener(e -> {
+            JPasswordField campoPassword = new JPasswordField();
+
+            int opcion = JOptionPane.showConfirmDialog(
+                    this,
+                    campoPassword,
+                    "Ingrese su contraseña actual",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE
+            );
+
+            if (opcion == JOptionPane.OK_OPTION) {
+                String passwordActual = new String(campoPassword.getPassword());
+                String respuesta = menus.desactivarMiCuenta(passwordActual);
+
+                JOptionPane.showMessageDialog(this, respuesta);
+
+                if (respuesta.equals("Cuenta desactivada exitosamente.")) {
                     cardLayout.show(contenedor, MENU_INICIO);
                 }
             }
