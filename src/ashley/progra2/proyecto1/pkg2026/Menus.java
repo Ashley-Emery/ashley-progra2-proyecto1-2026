@@ -13,6 +13,8 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import java.time.format.DateTimeFormatter;
+
 public class Menus {
 
     private ArrayList<Player> players;
@@ -28,19 +30,23 @@ public class Menus {
     // =========================================================
 
     public String login(String username, String password) {
-        Player player = buscarPlayerActivo(username);
+        Player player = buscarPlayerPorUsername(username);
 
         if (player == null) {
-            return "El username no existe o la cuenta está inactiva.";
+            return "El username no existe.";
         }
 
         if (!player.getPassword().equals(password)) {
             return "Password incorrecto.";
         }
 
+        if (!player.isActivo()) {
+            return "CUENTA_DESACTIVADA";
+        }
+
         player.actualizarFechaIngreso();
         loggedInPlayer = player;
-        return "Login exitoso. Ir al MENU PRINCIPAL.";
+        return "Login exitoso.";
     }
 
     public String crearPlayer(String username, String password) {
@@ -75,7 +81,7 @@ public class Menus {
 
     public String logout() {
         loggedInPlayer = null;
-        return "Logout exitoso. Ir al MENU INICIO.";
+        return "Logout exitoso.";
     }
 
     public boolean haySesionActiva() {
@@ -160,6 +166,10 @@ public class Menus {
         }
 
         ganador.sumarPuntos(3);
+        ganador.sumarVictoria();
+        ganador.sumarPartidaJugada();
+        perdedor.sumarPartidaJugada();
+
         partida.terminarPartida();
 
         String mensaje = "[" + partida.getIdPartida() + "] " + ganador.getUsername() + " venció a " + perdedor.getUsername()
@@ -185,6 +195,10 @@ public class Menus {
         }
 
         ganador.sumarPuntos(3);
+        ganador.sumarVictoria();
+        ganador.sumarPartidaJugada();
+        jugadorRetirado.sumarPartidaJugada();
+
         partida.terminarPartida();
 
         String mensaje = "[" + partida.getIdPartida() + "] " + jugadorRetirado.getUsername() + " se ha retirado, felicidades "
@@ -208,7 +222,7 @@ public class Menus {
         return "Username: " + loggedInPlayer.getUsername()
                 + "\nPuntos: " + loggedInPlayer.getPuntos()
                 + "\nFecha de ingreso: " + loggedInPlayer.getFechaIngreso()
-                + "\nActivo: " + loggedInPlayer.isActivo();
+                + "\nEstado: " + loggedInPlayer.getEstadoTexto();
     }
 
     public String cambiarPassword(String passwordActual, String passwordNuevo) {
@@ -240,12 +254,45 @@ public class Menus {
 
         String usernameEliminado = loggedInPlayer.getUsername();
 
-        loggedInPlayer.setActivo(false);
+        players.remove(loggedInPlayer);
         borrarArchivoLogsUsuario(usernameEliminado);
 
         loggedInPlayer = null;
 
         return "Cuenta eliminada exitosamente.";
+    }
+
+    public String desactivarMiCuenta(String passwordActual) {
+        if (loggedInPlayer == null) {
+            return "No hay usuario logged in.";
+        }
+
+        if (!loggedInPlayer.getPassword().equals(passwordActual)) {
+            return "Password incorrecto. No se desactivó la cuenta.";
+        }
+
+        loggedInPlayer.setActivo(false);
+        loggedInPlayer = null;
+
+        return "Cuenta desactivada exitosamente.";
+    }
+
+    public String reactivarCuenta(String username, String password) {
+        Player player = buscarPlayerPorUsername(username);
+
+        if (player == null) {
+            return "El username no existe.";
+        }
+
+        if (!player.getPassword().equals(password)) {
+            return "Password incorrecto.";
+        }
+
+        player.setActivo(true);
+        player.actualizarFechaIngreso();
+        loggedInPlayer = player;
+
+        return "Cuenta reactivada exitosamente.";
     }
 
     // =========================================================
@@ -450,6 +497,18 @@ public class Menus {
         return activos;
     }
 
+    private Player buscarPlayerPorUsername(String username) {
+        for (int i = 0; i < players.size(); i++) {
+            Player actual = players.get(i);
+
+            if (actual.getUsername().equalsIgnoreCase(username)) {
+                return actual;
+            }
+        }
+
+        return null;
+    }
+
     // =========================================================
     // CLASE PLAYER
     // =========================================================
@@ -460,6 +519,8 @@ public class Menus {
         private int puntos;
         private String fechaIngreso;
         private boolean activo;
+        private int partidasJugadas;
+        private int victorias;
 
         public Player(String username, String password) {
             this.username = username;
@@ -467,6 +528,8 @@ public class Menus {
             this.puntos = 0;
             this.fechaIngreso = LocalDateTime.now().toString();
             this.activo = true;
+            this.partidasJugadas = 0;
+            this.victorias = 0;
         }
 
         public Player(String username, String password, int puntos, String fechaIngreso, boolean activo) {
@@ -493,6 +556,24 @@ public class Menus {
             return fechaIngreso;
         }
 
+        public String getFechaIngresoFormateada() {
+            LocalDateTime fecha = LocalDateTime.parse(fechaIngreso);
+            DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            return fecha.format(formato);
+        }
+
+        public String getEstadoTexto() {
+            return activo ? "Activo" : "Inactivo";
+        }
+
+        public int getPartidasJugadas() {
+            return partidasJugadas;
+        }
+
+        public int getVictorias() {
+            return victorias;
+        }
+
         public boolean isActivo() {
             return activo;
         }
@@ -511,6 +592,14 @@ public class Menus {
 
         public void actualizarFechaIngreso() {
             this.fechaIngreso = LocalDateTime.now().toString();
+        }
+
+        public void sumarPartidaJugada() {
+            partidasJugadas++;
+        }
+
+        public void sumarVictoria() {
+            victorias++;
         }
 
     }

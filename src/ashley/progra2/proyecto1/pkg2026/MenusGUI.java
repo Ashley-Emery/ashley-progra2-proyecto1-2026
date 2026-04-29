@@ -31,6 +31,7 @@ public class MenusGUI extends JFrame {
     private static final String RANKING_JUGADORES = "RANKING_JUGADORES";
     private static final String LOG_ULTIMAS_PARTIDAS = "LOG_ULTIMAS_PARTIDAS";
     private static final String NUEVA_PARTIDA = "NUEVA_PARTIDA";
+    private static final String DESACTIVAR_CUENTA = "DESACTIVAR_CUENTA";
 
     public MenusGUI() {
         menus = new Menus();
@@ -261,6 +262,28 @@ public class MenusGUI extends JFrame {
                 txtUsuario.setText("");
                 txtPassword.setText("");
                 cardLayout.show(contenedor, MENU_PRINCIPAL);
+            } else if (respuesta.equals("CUENTA_DESACTIVADA")) {
+                int opcion = JOptionPane.showConfirmDialog(
+                        this,
+                        "Tu cuenta está desactivada. Si continúas, tu cuenta se reactivará. ¿Deseas continuar?",
+                        "Cuenta desactivada",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                if (opcion == JOptionPane.YES_OPTION) {
+                    String respuestaReactivar = menus.reactivarCuenta(username, password);
+                    JOptionPane.showMessageDialog(this, respuestaReactivar);
+
+                    if (respuestaReactivar.equals("Cuenta reactivada exitosamente. Ir al MENU PRINCIPAL.")) {
+                        txtUsuario.setText("");
+                        txtPassword.setText("");
+                        cardLayout.show(contenedor, MENU_PRINCIPAL);
+                    }
+                } else {
+                    txtUsuario.setText("");
+                    txtPassword.setText("");
+                    cardLayout.show(contenedor, MENU_INICIO);
+                }
             } else {
                 JOptionPane.showMessageDialog(this, respuesta);
             }
@@ -396,23 +419,25 @@ public class MenusGUI extends JFrame {
         titulo.setForeground(new Color(0xffd600));
         titulo.setFont(new Font("Open Sans", Font.BOLD, 30));
 
-        JPanel panelBotones = new JPanel();
-        panelBotones.setOpaque(false);
-        panelBotones.setLayout(new GridLayout(3, 1, 0, 18));
+        JTextArea datosCuenta = new JTextArea();
+        datosCuenta.setEditable(false);
+        datosCuenta.setOpaque(true);
+        datosCuenta.setBackground(new Color(0x9ba38e));
+        datosCuenta.setForeground(Color.WHITE);
+        datosCuenta.setFont(new Font("Open Sans", Font.BOLD, 17));
+        datosCuenta.setBorder(BorderFactory.createEmptyBorder(12, 18, 12, 18));
+        datosCuenta.setPreferredSize(new Dimension(390, 150));
 
         JButton btnCambiarPassword = crearBotonMenu("Cambiar password");
+        JButton btnDesactivarCuenta = crearBotonMenu("Desactivar cuenta");
         JButton btnEliminarCuenta = crearBotonMenu("Eliminar cuenta");
+        btnEliminarCuenta.setBackground(new Color(0xa93407));
         JButton btnVolver = crearBotonColor("Volver", new Color(0xec9c0d));
 
         btnCambiarPassword.addActionListener(e -> cardLayout.show(contenedor, CAMBIAR_PASSWORD));
-
+        btnDesactivarCuenta.addActionListener(e -> cardLayout.show(contenedor, DESACTIVAR_CUENTA));
         btnEliminarCuenta.addActionListener(e -> cardLayout.show(contenedor, ELIMINAR_CUENTA));
-
         btnVolver.addActionListener(e -> cardLayout.show(contenedor, MENU_PRINCIPAL));
-
-        panelBotones.add(btnCambiarPassword);
-        panelBotones.add(btnEliminarCuenta);
-        panelBotones.add(btnVolver);
 
         JPanel panelDerecho = new JPanel(new GridBagLayout());
         panelDerecho.setOpaque(false);
@@ -421,12 +446,23 @@ public class MenusGUI extends JFrame {
 
         rGbc.gridx = 0;
         rGbc.gridy = 0;
-        rGbc.insets = new Insets(0, 0, 30, 0);
         rGbc.anchor = GridBagConstraints.CENTER;
+        rGbc.insets = new Insets(0, 0, 15, 0);
         panelDerecho.add(titulo, rGbc);
 
         rGbc.gridy = 1;
-        panelDerecho.add(panelBotones, rGbc);
+        rGbc.insets = new Insets(0, 0, 20, 0);
+        panelDerecho.add(datosCuenta, rGbc);
+
+        rGbc.gridy = 2;
+        rGbc.insets = new Insets(0, 0, 18, 0);
+        panelDerecho.add(btnCambiarPassword, rGbc);
+
+        rGbc.gridy = 3;
+        panelDerecho.add(btnDesactivarCuenta, rGbc);
+
+        rGbc.gridy = 4;
+        panelDerecho.add(btnEliminarCuenta, rGbc);
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -442,6 +478,37 @@ public class MenusGUI extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(0, 0, 0, 70);
         panel.add(panelDerecho, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 0.55;
+        gbc.weighty = 0.0;
+        gbc.anchor = GridBagConstraints.SOUTHWEST;
+        gbc.insets = new Insets(0, 90, 70, 0);
+        panel.add(btnVolver, gbc);
+
+        panel.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent event) {
+                Menus.Player player = menus.getLoggedInPlayer();
+
+                if (player != null) {
+                    datosCuenta.setText(
+                            "Usuario: " + player.getUsername()
+                            + "\nEstado: " + player.getEstadoTexto()
+                            + "\nUltimo ingreso: " + player.getFechaIngresoFormateada()
+                            + "\nPartidas jugadas: " + player.getPartidasJugadas()
+                            + "\nVictorias: " + player.getVictorias()
+                            + "\nPuntaje: " + player.getPuntos()
+                    );
+                }
+            }
+
+            public void ancestorRemoved(javax.swing.event.AncestorEvent event) {
+            }
+
+            public void ancestorMoved(javax.swing.event.AncestorEvent event) {
+            }
+        });
 
         return panel;
     }
