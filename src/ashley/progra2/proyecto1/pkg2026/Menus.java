@@ -52,7 +52,7 @@ public class Menus {
         }
 
         if (!passwordValido(password)) {
-            return "El password debe tener exactamente 5 caracteres.";
+            return "El password debe tener exactamente 5 caracteres, contener mayusculas, minusculas, numero y al menos un caracter especial.";
         }
 
         Player nuevo = new Player(username, password);
@@ -220,7 +220,7 @@ public class Menus {
         }
 
         if (!passwordValido(passwordNuevo)) {
-            return "El nuevo password debe tener exactamente 5 caracteres.";
+            return "El password debe tener exactamente 5 caracteres, contener mayusculas, minusculas, numero y al menos un caracter especial.";
         }
 
         loggedInPlayer.setPassword(passwordNuevo);
@@ -388,7 +388,31 @@ public class Menus {
     // =========================================================
 
     private boolean passwordValido(String password) {
-        return password != null && password.length() == 5;
+        if (password == null || password.length() != 5) {
+            return false;
+        }
+
+        boolean tieneMayuscula = false;
+        boolean tieneMinuscula = false;
+        boolean tieneNumero = false;
+        boolean tieneEspecial = false;
+
+        for (int i = 0; i < password.length(); i++) {
+
+            char caracter = password.charAt(i);
+
+            if (Character.isUpperCase(caracter)) {
+                tieneMayuscula = true;
+            } else if (Character.isLowerCase(caracter)) {
+                tieneMinuscula = true;
+            } else if (Character.isDigit(caracter)) {
+                tieneNumero = true;
+            } else {
+                tieneEspecial = true;
+            }
+        }
+
+        return tieneMayuscula && tieneMinuscula && tieneNumero && tieneEspecial;
     }
 
     private boolean existeUsername(String username) {
