@@ -19,10 +19,12 @@ public class Menus {
 
     private ArrayList<Player> players;
     private Player loggedInPlayer;
+    private ArrayList<LogUsuario> logsUsuarios;
 
     public Menus() {
         players = new ArrayList<Player>();
         loggedInPlayer = null;
+        logsUsuarios = new ArrayList<LogUsuario>();
     }
 
     // =========================================================
@@ -255,7 +257,7 @@ public class Menus {
         String usernameEliminado = loggedInPlayer.getUsername();
 
         players.remove(loggedInPlayer);
-        borrarArchivoLogsUsuario(usernameEliminado);
+        borrarLogsUsuario(usernameEliminado);
 
         loggedInPlayer = null;
 
@@ -268,7 +270,7 @@ public class Menus {
         }
 
         if (!loggedInPlayer.getPassword().equals(passwordActual)) {
-            return "Password incorrecto. No se desactivó la cuenta.";
+            return "Password incorrecto. No se desactivo la cuenta.";
         }
 
         loggedInPlayer.setActivo(false);
@@ -331,23 +333,6 @@ public class Menus {
         return resultado;
     }
 
-    public String exportarLogsMisUltimosJuegos(String rutaArchivo) {
-        ArrayList<String> misLogs = logsMisUltimosJuegos();
-
-        try {
-            PrintWriter writer = new PrintWriter(new FileWriter(rutaArchivo));
-
-            for (int i = 0; i < misLogs.size(); i++) {
-                writer.println(misLogs.get(i));
-            }
-
-            writer.close();
-            return "Logs exportados exitosamente.";
-        } catch (IOException e) {
-            return "No se pudieron exportar los logs.";
-        }
-    }
-
     // =========================================================
     // LOGS INDIVIDUALES POR USUARIO
     // =========================================================
@@ -358,37 +343,25 @@ public class Menus {
     }
 
     private void registrarLog(String username, String accion) {
-        try {
-            PrintWriter writer = new PrintWriter(new FileWriter(obtenerArchivoLog(username), true));
-            writer.println(LocalDateTime.now().toString() + " - " + accion);
-            writer.close();
-        } catch (IOException e) {
-        }
+        LogUsuario nuevoLog = new LogUsuario(username, LocalDateTime.now().toString(), accion);
+        logsUsuarios.add(nuevoLog);
     }
 
     private void cargarLogsUsuario(String username, ArrayList<String> misLogs) {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(obtenerArchivoLog(username)));
-            String linea;
+        for (int i = 0; i < logsUsuarios.size(); i++) {
+            LogUsuario log = logsUsuarios.get(i);
 
-            while ((linea = reader.readLine()) != null) {
-                misLogs.add(linea);
+            if (log.getUsername().equalsIgnoreCase(username)) {
+                misLogs.add(log.getFecha() + " - " + log.getAccion());
             }
-
-            reader.close();
-        } catch (IOException e) {
         }
     }
 
-    private String obtenerArchivoLog(String username) {
-        return "logs_" + username + ".xia";
-    }
-
-    private void borrarArchivoLogsUsuario(String username) {
-        File archivo = new File(obtenerArchivoLog(username));
-
-        if (archivo.exists()) {
-            archivo.delete();
+    private void borrarLogsUsuario(String username) {
+        for (int i = logsUsuarios.size() - 1; i >= 0; i--) {
+            if (logsUsuarios.get(i).getUsername().equalsIgnoreCase(username)) {
+                logsUsuarios.remove(i);
+            }
         }
     }
 
@@ -507,6 +480,34 @@ public class Menus {
         }
 
         return null;
+    }
+
+    // =========================================================
+    // CLASE LOG USUARIO
+    // =========================================================
+
+    public static class LogUsuario {
+        private String username;
+        private String fecha;
+        private String accion;
+
+        public LogUsuario(String username, String fecha, String accion) {
+            this.username = username;
+            this.fecha = fecha;
+            this.accion = accion;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getFecha() {
+            return fecha;
+        }
+
+        public String getAccion() {
+            return accion;
+        }
     }
 
     // =========================================================

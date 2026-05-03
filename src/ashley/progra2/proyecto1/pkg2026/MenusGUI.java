@@ -1032,23 +1032,8 @@ public class MenusGUI extends JFrame {
         scrollTabla.setPreferredSize(new Dimension(430, 300));
 
         JButton btnVolver = crearBotonColor("Volver", new Color(0xec9c0d));
-        JButton btnExportar = crearBotonColor("Exportar logs", new Color(0xa93407));
 
         btnVolver.addActionListener(e -> cardLayout.show(contenedor, REPORTES));
-
-        btnExportar.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Guardar logs");
-
-            int opcion = fileChooser.showSaveDialog(this);
-
-            if (opcion == JFileChooser.APPROVE_OPTION) {
-                String ruta = fileChooser.getSelectedFile().getAbsolutePath();
-                String respuesta = menus.exportarLogsMisUltimosJuegos(ruta);
-
-                JOptionPane.showMessageDialog(this, respuesta);
-            }
-        });
 
         tabla.addAncestorListener(new javax.swing.event.AncestorListener() {
             public void ancestorAdded(javax.swing.event.AncestorEvent event) {
@@ -1091,10 +1076,6 @@ public class MenusGUI extends JFrame {
         rGbc.gridy = 1;
         rGbc.insets = new Insets(0, 0, 25, 0);
         panelDerecho.add(scrollTabla, rGbc);
-
-        rGbc.gridy = 2;
-        rGbc.insets = new Insets(0, 0, 0, 0);
-        panelDerecho.add(btnExportar, rGbc);
 
         gbc.gridx = 0;
         gbc.gridy = 0;
