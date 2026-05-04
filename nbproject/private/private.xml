@@ -3,8 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/ashley/NetBeansProjects/ashley-progra2-proyecto1-2026/src/ashley/progra2/proyecto1/pkg2026/AshleyProgra2Proyecto12026.java</file>
-            <file>file:/home/ashley/NetBeansProjects/ashley-progra2-proyecto1-2026/src/ashley/progra2/proyecto1/pkg2026/Menus.java</file>
+            <file>file:/home/ashley/NetBeansProjects/ashley-progra2-proyecto1-2026/src/ashley/progra2/proyecto1/pkg2026/Pieza.java</file>
+            <file>file:/home/ashley/NetBeansProjects/ashley-progra2-proyecto1-2026/src/ashley/progra2/proyecto1/pkg2026/PartidaXiangqi.java</file>
+            <file>file:/home/ashley/NetBeansProjects/ashley-progra2-proyecto1-2026/src/ashley/progra2/proyecto1/pkg2026/PiezasXiangqi.java</file>
+            <file>file:/home/ashley/NetBeansProjects/ashley-progra2-proyecto1-2026/src/ashley/progra2/proyecto1/pkg2026/ValidadorXiangqi.java</file>
+            <file>file:/home/ashley/NetBeansProjects/ashley-progra2-proyecto1-2026/src/ashley/progra2/proyecto1/pkg2026/XiangqiException.java</file>
+            <file>file:/home/ashley/NetBeansProjects/ashley-progra2-proyecto1-2026/src/ashley/progra2/proyecto1/pkg2026/TableroGUI.java</file>
         </group>
     </open-files>
 </project-private>

@@ -1160,10 +1160,7 @@ public class MenusGUI extends JFrame {
                     JOptionPane.showMessageDialog(this, "No se pudo iniciar la partida.");
                 } else {
                     JOptionPane.showMessageDialog(this, "Partida iniciada: " + partida.getIdPartida());
-                    
-                    // Más adelante, cuando exista TableroGUI.java:
-                    // new TableroGUI(menus, partida);
-                    // this.dispose();
+                    new TableroGUI(menus, partida);
                 }
             }
         });
