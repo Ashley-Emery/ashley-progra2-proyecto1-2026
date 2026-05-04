@@ -63,6 +63,7 @@ public class TableroGUI extends JFrame {
         add(crearPanelPrincipal());
 
         actualizarInformacion("Sin movimientos todavía.");
+        pintarPiezasIniciales();
 
         setVisible(true);
     }
@@ -110,6 +111,8 @@ public class TableroGUI extends JFrame {
 
                 int numeroImagen = GRID_IMAGENES[fila][columna];
                 boton.setIcon(cargarImagenGrid(numeroImagen, 52, 56));
+                boton.setHorizontalTextPosition(SwingConstants.CENTER);
+                boton.setVerticalTextPosition(SwingConstants.CENTER);
 
                 botonesTablero[fila][columna] = boton;
                 panelTablero.add(boton);
@@ -229,6 +232,48 @@ public class TableroGUI extends JFrame {
         }
     }
 
+    private void pintarPiezasIniciales() {
+        Pieza[][] tablero = partidaXiangqi.getTablero();
+
+        for (int fila = 0; fila < 10; fila++) {
+            for (int columna = 0; columna < 9; columna++) {
+                Pieza pieza = tablero[fila][columna];
+
+                ImageIcon iconoGrid = cargarImagenGrid(GRID_IMAGENES[fila][columna], 52, 56);
+                ImageIcon iconoPieza = null;
+
+                if (pieza != null) {
+                    iconoPieza = cargarImagenPieza(obtenerNombreImagenPieza(pieza), 42, 42);
+                }
+
+                botonesTablero[fila][columna].setIcon(new IconoCompuesto(iconoGrid, iconoPieza));
+            }
+        }
+    }
+
+    private ImageIcon cargarImagenPieza(String nombrePieza, int ancho, int alto) {
+        String ruta = "/ashley/progra2/proyecto1/pkg2026/assets/" + nombrePieza;
+
+        try {
+            ImageIcon icono = new ImageIcon(TableroGUI.class.getResource(ruta));
+            Image imagen = icono.getImage().getScaledInstance(ancho, alto, Image.SCALE_SMOOTH);
+            return new ImageIcon(imagen);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private String obtenerNombreImagenPieza(Pieza pieza) {
+        String nombre = pieza.getNombre().toLowerCase();
+        String color = pieza.getColor().toLowerCase();
+
+        if (nombre.equals("carro")) {
+            nombre = "carroguerra";
+        }
+
+        return nombre + "_" + color + ".png";
+    }
+
     private ImageIcon cargarImagenGrid(int numero, int ancho, int alto) {
         String ruta = "/ashley/progra2/proyecto1/pkg2026/assets/grid_" + numero + ".png";
 
@@ -238,6 +283,35 @@ public class TableroGUI extends JFrame {
             return new ImageIcon(imagen);
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    private static class IconoCompuesto implements Icon {
+
+        private ImageIcon fondo;
+        private ImageIcon pieza;
+
+        public IconoCompuesto(ImageIcon fondo, ImageIcon pieza) {
+            this.fondo = fondo;
+            this.pieza = pieza;
+        }
+
+        public int getIconWidth() {
+            return fondo.getIconWidth();
+        }
+
+        public int getIconHeight() {
+            return fondo.getIconHeight();
+        }
+
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            fondo.paintIcon(c, g, x, y);
+
+            if (pieza != null) {
+                int piezaX = x + (fondo.getIconWidth() - pieza.getIconWidth()) / 2;
+                int piezaY = y + (fondo.getIconHeight() - pieza.getIconHeight()) / 2;
+                pieza.paintIcon(c, g, piezaX, piezaY);
+            }
         }
     }
 
