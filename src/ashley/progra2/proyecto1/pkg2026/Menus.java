@@ -17,14 +17,12 @@ import java.time.format.DateTimeFormatter;
 
 public class Menus {
 
-    private ArrayList<Player> players;
+    private Almacenamiento almacenamiento;
     private Player loggedInPlayer;
-    private ArrayList<LogUsuario> logsUsuarios;
 
     public Menus() {
-        players = new ArrayList<Player>();
+        almacenamiento = new AlmacenamientoMemoria();
         loggedInPlayer = null;
-        logsUsuarios = new ArrayList<LogUsuario>();
     }
 
     // =========================================================
@@ -65,7 +63,7 @@ public class Menus {
         }
 
         Player nuevo = new Player(username, password);
-        players.add(nuevo);
+        almacenamiento.agregarPlayer(nuevo);
 
         loggedInPlayer = nuevo;
 
@@ -105,8 +103,8 @@ public class Menus {
             return oponentes;
         }
 
-        for (int i = 0; i < players.size(); i++) {
-            Player actual = players.get(i);
+        for (int i = 0; i < almacenamiento.getPlayers().size(); i++) {
+            Player actual = almacenamiento.getPlayers().get(i);
 
             if (actual.isActivo() && !actual.getUsername().equalsIgnoreCase(loggedInPlayer.getUsername())) {
                 oponentes.add(actual);
@@ -132,6 +130,7 @@ public class Menus {
         }
 
         Partida partida = new Partida(loggedInPlayer, oponente);
+        almacenamiento.agregarPartida(partida);
 
         registrarLogAmbos(
                 partida,
@@ -256,8 +255,8 @@ public class Menus {
 
         String usernameEliminado = loggedInPlayer.getUsername();
 
-        players.remove(loggedInPlayer);
-        borrarLogsUsuario(usernameEliminado);
+        almacenamiento.eliminarPlayer(loggedInPlayer);
+        almacenamiento.eliminarLogsUsuario(usernameEliminado);
 
         loggedInPlayer = null;
 
@@ -344,23 +343,15 @@ public class Menus {
 
     private void registrarLog(String username, String accion) {
         LogUsuario nuevoLog = new LogUsuario(username, LocalDateTime.now().toString(), accion);
-        logsUsuarios.add(nuevoLog);
+        almacenamiento.agregarLog(nuevoLog);
     }
 
     private void cargarLogsUsuario(String username, ArrayList<String> misLogs) {
-        for (int i = 0; i < logsUsuarios.size(); i++) {
-            LogUsuario log = logsUsuarios.get(i);
+        for (int i = 0; i < almacenamiento.getLogsUsuarios().size(); i++) {
+            LogUsuario log = almacenamiento.getLogsUsuarios().get(i);
 
             if (log.getUsername().equalsIgnoreCase(username)) {
                 misLogs.add(log.getFecha() + " - " + log.getAccion());
-            }
-        }
-    }
-
-    private void borrarLogsUsuario(String username) {
-        for (int i = logsUsuarios.size() - 1; i >= 0; i--) {
-            if (logsUsuarios.get(i).getUsername().equalsIgnoreCase(username)) {
-                logsUsuarios.remove(i);
             }
         }
     }
@@ -437,8 +428,8 @@ public class Menus {
     }
 
     private boolean existeUsername(String username) {
-        for (int i = 0; i < players.size(); i++) {
-            if (players.get(i).getUsername().equalsIgnoreCase(username)) {
+        for (int i = 0; i < almacenamiento.getPlayers().size(); i++) {
+            if (almacenamiento.getPlayers().get(i).getUsername().equalsIgnoreCase(username)) {
                 return true;
             }
         }
@@ -447,8 +438,8 @@ public class Menus {
     }
 
     private Player buscarPlayerActivo(String username) {
-        for (int i = 0; i < players.size(); i++) {
-            Player actual = players.get(i);
+        for (int i = 0; i < almacenamiento.getPlayers().size(); i++) {
+            Player actual = almacenamiento.getPlayers().get(i);
 
             if (actual.getUsername().equalsIgnoreCase(username) && actual.isActivo()) {
                 return actual;
@@ -461,9 +452,9 @@ public class Menus {
     private ArrayList<Player> obtenerPlayersActivos() {
         ArrayList<Player> activos = new ArrayList<Player>();
 
-        for (int i = 0; i < players.size(); i++) {
-            if (players.get(i).isActivo()) {
-                activos.add(players.get(i));
+        for (int i = 0; i < almacenamiento.getPlayers().size(); i++) {
+            if (almacenamiento.getPlayers().get(i).isActivo()) {
+                activos.add(almacenamiento.getPlayers().get(i));
             }
         }
 
@@ -471,8 +462,8 @@ public class Menus {
     }
 
     private Player buscarPlayerPorUsername(String username) {
-        for (int i = 0; i < players.size(); i++) {
-            Player actual = players.get(i);
+        for (int i = 0; i < almacenamiento.getPlayers().size(); i++) {
+            Player actual = almacenamiento.getPlayers().get(i);
 
             if (actual.getUsername().equalsIgnoreCase(username)) {
                 return actual;
