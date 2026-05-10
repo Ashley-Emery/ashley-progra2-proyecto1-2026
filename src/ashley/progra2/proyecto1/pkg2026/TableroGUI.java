@@ -26,6 +26,16 @@ public class TableroGUI extends JFrame {
     private JLabel lblCapturas;
     private JLabel lblIdPartida;
 
+    private int filaSeleccionada = -1;
+    private int columnaSeleccionada = -1;
+    private int filaDestinoSeleccionada = -1;
+    private int columnaDestinoSeleccionada = -1;
+
+    private boolean piezaConfirmada = false;
+
+    private static final Color COLOR_SELECCION = new Color(0x5170ff);
+    private static final Color COLOR_DESTINO = new Color(0x4d992c);
+
     private static final int[][] GRID_IMAGENES = {
         {6, 2, 2, 13, 2, 14, 2, 2, 9},
         {4, 1, 1, 1, 10, 1, 1, 1, 5},
@@ -112,7 +122,12 @@ public class TableroGUI extends JFrame {
                 int numeroImagen = GRID_IMAGENES[fila][columna];
                 boton.setIcon(cargarImagenGrid(numeroImagen, 52, 56));
                 boton.setHorizontalTextPosition(SwingConstants.CENTER);
-                boton.setVerticalTextPosition(SwingConstants.CENTER);
+                
+                
+                final int filaActual = fila;
+                final int columnaActual = columna;
+
+                boton.addActionListener(e -> manejarClickTablero(filaActual, columnaActual));
 
                 botonesTablero[fila][columna] = boton;
                 panelTablero.add(boton);
@@ -230,6 +245,111 @@ public class TableroGUI extends JFrame {
         } catch (XiangqiException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
+    }
+
+    private void manejarClickTablero(int fila, int columna) {
+        if (!piezaConfirmada) {
+            manejarSeleccionDePieza(fila, columna);
+        } else {
+            seleccionarDestino(fila, columna);
+        }
+    }
+
+    private void manejarSeleccionDePieza(int fila, int columna) {
+        Pieza[][] tablero = partidaXiangqi.getTablero();
+        Pieza pieza = tablero[fila][columna];
+
+        if (pieza == null) {
+            JOptionPane.showMessageDialog(this, "No hay pieza seleccionada.");
+            limpiarSeleccion();
+            return;
+        }
+
+        if (!pieza.getColor().equalsIgnoreCase(partidaXiangqi.getTurnoColor())) {
+            JOptionPane.showMessageDialog(this, "No puedes mover una pieza del rival.");
+            limpiarSeleccion();
+            return;
+        }
+
+        if (filaSeleccionada == fila && columnaSeleccionada == columna) {
+            piezaConfirmada = true;
+            botonesTablero[fila][columna].setBorder(BorderFactory.createLineBorder(COLOR_SELECCION, 5));
+            botonesTablero[fila][columna].setBorderPainted(true);
+            return;
+        }
+
+        limpiarSeleccion();
+
+        filaSeleccionada = fila;
+        columnaSeleccionada = columna;
+
+        botonesTablero[fila][columna].setBorder(BorderFactory.createLineBorder(COLOR_SELECCION, 4));
+        botonesTablero[fila][columna].setBorderPainted(true);
+    }
+
+    private void seleccionarDestino(int fila, int columna) {
+        if (fila == filaSeleccionada && columna == columnaSeleccionada) {
+            piezaConfirmada = false;
+            limpiarSeleccion();
+            return;
+        }
+
+        if (filaDestinoSeleccionada == fila && columnaDestinoSeleccionada == columna) {
+            moverPiezaSeleccionada(fila, columna);
+            return;
+        }
+
+        limpiarDestino();
+
+        filaDestinoSeleccionada = fila;
+        columnaDestinoSeleccionada = columna;
+
+        botonesTablero[fila][columna].setBorder(BorderFactory.createLineBorder(COLOR_DESTINO, 4));
+        botonesTablero[fila][columna].setBorderPainted(true);
+    }
+
+    private void moverPiezaSeleccionada(int filaDestino, int columnaDestino) {
+        try {
+            String respuesta = partidaXiangqi.mover(
+                    filaSeleccionada,
+                    columnaSeleccionada,
+                    filaDestino,
+                    columnaDestino
+            );
+
+            limpiarSeleccion();
+            pintarPiezasIniciales();
+            actualizarInformacion(respuesta);
+
+            JOptionPane.showMessageDialog(this, respuesta);
+
+        } catch (XiangqiException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+            limpiarDestino();
+        }
+    }
+
+    private void limpiarDestino() {
+        if (filaDestinoSeleccionada != -1 && columnaDestinoSeleccionada != -1) {
+            botonesTablero[filaDestinoSeleccionada][columnaDestinoSeleccionada].setBorder(null);
+            botonesTablero[filaDestinoSeleccionada][columnaDestinoSeleccionada].setBorderPainted(false);
+        }
+
+        filaDestinoSeleccionada = -1;
+        columnaDestinoSeleccionada = -1;
+    }
+
+    private void limpiarSeleccion() {
+        if (filaSeleccionada != -1 && columnaSeleccionada != -1) {
+            botonesTablero[filaSeleccionada][columnaSeleccionada].setBorder(null);
+            botonesTablero[filaSeleccionada][columnaSeleccionada].setBorderPainted(false);
+        }
+
+        limpiarDestino();
+
+        filaSeleccionada = -1;
+        columnaSeleccionada = -1;
+        piezaConfirmada = false;
     }
 
     private void pintarPiezasIniciales() {
