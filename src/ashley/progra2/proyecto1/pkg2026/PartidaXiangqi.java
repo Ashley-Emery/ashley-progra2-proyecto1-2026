@@ -80,7 +80,7 @@ public class PartidaXiangqi {
         Pieza destino = tablero[filaDestino][columnaDestino];
 
         if (!pieza.movimientoValido(tablero, filaDestino, columnaDestino)) {
-            throw new XiangqiException("Movimiento inválido para la pieza seleccionada.");
+            throw new XiangqiException("Movimiento invalido para la pieza seleccionada.");
         }
 
         tablero[filaDestino][columnaDestino] = pieza;
@@ -89,18 +89,6 @@ public class PartidaXiangqi {
 
         if (destino != null) {
             destino.capturar();
-        }
-
-        if (ValidadorXiangqi.generalesEnfrentados(tablero) || estaEnJaque(turnoColor)) {
-            tablero[filaOrigen][columnaOrigen] = pieza;
-            tablero[filaDestino][columnaDestino] = destino;
-            pieza.setPosicion(filaOrigen, columnaOrigen);
-
-            if (destino != null) {
-                destino.reactivar();
-            }
-
-            throw new XiangqiException("Movimiento ilegal. Tu General quedaría en peligro.");
         }
 
         String movimiento = pieza.getNombre()

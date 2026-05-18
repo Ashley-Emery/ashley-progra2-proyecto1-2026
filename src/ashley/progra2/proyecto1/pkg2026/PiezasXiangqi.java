@@ -124,14 +124,25 @@ public class PiezasXiangqi {
                 return false;
             }
 
-            int piezasEntre = ValidadorXiangqi.contarPiezasEntre(tablero, fila, columna, filaDestino, columnaDestino);
+            int piezasEntre = ValidadorXiangqi.contarPiezasEntre(
+                    tablero,
+                    fila,
+                    columna,
+                    filaDestino,
+                    columnaDestino
+            );
+
             Pieza destino = tablero[filaDestino][columnaDestino];
 
             if (destino == null) {
                 return piezasEntre == 0;
             }
 
-            return piezasEntre == 1 && ValidadorXiangqi.piezaEnemiga(this, destino);
+            if (destino.getColor().equalsIgnoreCase(color)) {
+                return false;
+            }
+
+            return piezasEntre == 1;
         }
     }
 

@@ -640,13 +640,10 @@ public class Menus {
         }
 
         private static String generarIdPartida(Player jugadorRojo, Player jugadorNegro) {
-            String fecha = LocalDateTime.now().toString();
+            DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+            String fecha = LocalDateTime.now().format(formato);
 
-            fecha = fecha.replace("-", "");
-            fecha = fecha.replace(":", "");
-            fecha = fecha.replace(".", "");
-
-            return "PX-" + jugadorRojo.getUsername() + "-" + jugadorNegro.getUsername() + "-" + fecha;
+            return "PX-" + fecha;
         }
 
         public String cambiarTurno() {

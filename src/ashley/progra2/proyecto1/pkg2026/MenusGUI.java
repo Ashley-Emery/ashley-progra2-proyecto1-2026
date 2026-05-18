@@ -1160,7 +1160,7 @@ public class MenusGUI extends JFrame {
                     JOptionPane.showMessageDialog(this, "No se pudo iniciar la partida.");
                 } else {
                     JOptionPane.showMessageDialog(this, "Partida iniciada: " + partida.getIdPartida());
-                    new TableroGUI(menus, partida);
+                    new TableroGUI(menus, partida, this);
                 }
             }
         });
@@ -1290,6 +1290,10 @@ public class MenusGUI extends JFrame {
         campo.setPreferredSize(new Dimension(270, 45));
         campo.setBorder(null);
         return campo;
+    }
+
+    public void mostrarRankingJugadores() {
+        cardLayout.show(contenedor, RANKING_JUGADORES);
     }
 
     private static class FondoPanel extends JPanel {

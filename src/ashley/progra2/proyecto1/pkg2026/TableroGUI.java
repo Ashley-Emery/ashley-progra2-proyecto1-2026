@@ -18,13 +18,17 @@ public class TableroGUI extends JFrame {
     private Menus.Partida partidaMenus;
     private PartidaXiangqi partidaXiangqi;
 
+    private MenusGUI menusGUI;
+
     private JButton[][] botonesTablero;
     private JLabel lblPartida;
     private JLabel lblTurno;
     private JLabel lblEstado;
     private JLabel lblUltimoMovimiento;
-    private JLabel lblCapturas;
     private JLabel lblIdPartida;
+
+    private JPanel panelCapturasRojo;
+    private JPanel panelCapturasNegro;
 
     private int filaSeleccionada = -1;
     private int columnaSeleccionada = -1;
@@ -49,9 +53,10 @@ public class TableroGUI extends JFrame {
         {8, 3, 3, 18, 3, 17, 3, 3, 7}
     };
 
-    public TableroGUI(Menus menus, Menus.Partida partidaMenus) {
+    public TableroGUI(Menus menus, Menus.Partida partidaMenus, MenusGUI menusGUI) {
         this.menus = menus;
         this.partidaMenus = partidaMenus;
+        this.menusGUI = menusGUI;
 
         try {
             this.partidaXiangqi = new PartidaXiangqi(menus, partidaMenus);
@@ -154,22 +159,42 @@ public class TableroGUI extends JFrame {
         cajaInfo.setLayout(new BoxLayout(cajaInfo, BoxLayout.Y_AXIS));
         cajaInfo.setBackground(new Color(0xa93407));
         cajaInfo.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        cajaInfo.setPreferredSize(new Dimension(430, 210));
+        cajaInfo.setPreferredSize(new Dimension(430, 175));
 
         lblPartida = crearLabelInfo();
         lblTurno = crearLabelInfo();
         lblEstado = crearLabelInfo();
         lblUltimoMovimiento = crearLabelInfo();
-        lblCapturas = crearLabelInfo();
 
         cajaInfo.add(lblPartida);
-        cajaInfo.add(Box.createVerticalStrut(12));
+        cajaInfo.add(Box.createVerticalStrut(18));
         cajaInfo.add(lblTurno);
         cajaInfo.add(lblEstado);
-        cajaInfo.add(Box.createVerticalStrut(12));
+        cajaInfo.add(Box.createVerticalStrut(18));
         cajaInfo.add(lblUltimoMovimiento);
-        cajaInfo.add(Box.createVerticalStrut(12));
-        cajaInfo.add(lblCapturas);
+
+        JPanel cajaCapturas = new JPanel();
+        cajaCapturas.setLayout(new BoxLayout(cajaCapturas, BoxLayout.Y_AXIS));
+        cajaCapturas.setBackground(new Color(0x9ba38e));
+        cajaCapturas.setBorder(BorderFactory.createEmptyBorder(12, 15, 12, 15));
+        cajaCapturas.setPreferredSize(new Dimension(430, 125));
+
+        JLabel tituloCapturas = crearLabelInfo();
+        tituloCapturas.setText("[ Capturas ]");
+        tituloCapturas.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        panelCapturasRojo = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        panelCapturasRojo.setOpaque(false);
+
+        panelCapturasNegro = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        panelCapturasNegro.setOpaque(false);
+
+        panelCapturasRojo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelCapturasNegro.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        cajaCapturas.add(tituloCapturas);
+        cajaCapturas.add(panelCapturasRojo);
+        cajaCapturas.add(panelCapturasNegro);
 
         lblIdPartida = new JLabel("", SwingConstants.RIGHT);
         lblIdPartida.setOpaque(true);
@@ -188,14 +213,18 @@ public class TableroGUI extends JFrame {
         panelInfo.add(titulo, gbc);
 
         gbc.gridy = 1;
-        gbc.insets = new Insets(0, 0, 12, 0);
+        gbc.insets = new Insets(0, 0, 6, 0);
         panelInfo.add(cajaInfo, gbc);
 
         gbc.gridy = 2;
-        gbc.insets = new Insets(0, 0, 70, 0);
-        panelInfo.add(lblIdPartida, gbc);
+        gbc.insets = new Insets(0, 0, 8, 0);
+        panelInfo.add(cajaCapturas, gbc);
 
         gbc.gridy = 3;
+        gbc.insets = new Insets(0, 0, 55, 0);
+        panelInfo.add(lblIdPartida, gbc);
+
+        gbc.gridy = 4;
         gbc.insets = new Insets(0, 0, 0, 0);
         panelInfo.add(btnAbandonar, gbc);
 
@@ -227,21 +256,27 @@ public class TableroGUI extends JFrame {
                 + " vs "
                 + partidaMenus.getJugadorNegro().getUsername());
 
-        lblTurno.setText("Turno: " + partidaXiangqi.getTurnoColor());
+        lblTurno.setText("Turno: " + obtenerUsernamePorColor(partidaXiangqi.getTurnoColor()));
         lblEstado.setText("Estado: " + partidaXiangqi.getEstado());
 
         lblUltimoMovimiento.setText("<html>[ Ultimo movimiento ]<br>" + ultimoMovimiento + "</html>");
 
-        lblCapturas.setText("<html>[ Capturas ]<br>Rojo: pendiente<br>Negro: pendiente</html>");
-
         lblIdPartida.setText("[ ID: " + partidaMenus.getIdPartida() + " ]");
+
+        actualizarCapturas();
     }
 
     private void abandonarPartida() {
         try {
             String respuesta = partidaXiangqi.retirar(partidaXiangqi.getTurnoColor());
             JOptionPane.showMessageDialog(this, respuesta);
-            actualizarInformacion("Jugador " + partidaXiangqi.getTurnoColor() + " abandonó la partida.");
+
+            if (menusGUI != null) {
+                menusGUI.mostrarRankingJugadores();
+            }
+
+            dispose();
+
         } catch (XiangqiException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
@@ -310,6 +345,14 @@ public class TableroGUI extends JFrame {
 
     private void moverPiezaSeleccionada(int filaDestino, int columnaDestino) {
         try {
+            Pieza pieza = partidaXiangqi.getTablero()[filaSeleccionada][columnaSeleccionada];
+
+            String ultimoMovimiento = obtenerUsernamePorColor(pieza.getColor())
+                    + " movio " + pieza.getNombre()
+                    + " (" + filaSeleccionada + "," + columnaSeleccionada + ")"
+                    + " → "
+                    + "(" + filaDestino + "," + columnaDestino + ")";
+
             String respuesta = partidaXiangqi.mover(
                     filaSeleccionada,
                     columnaSeleccionada,
@@ -319,9 +362,11 @@ public class TableroGUI extends JFrame {
 
             limpiarSeleccion();
             pintarPiezasIniciales();
-            actualizarInformacion(respuesta);
+            actualizarInformacion(ultimoMovimiento);
 
-            JOptionPane.showMessageDialog(this, respuesta);
+            if (respuesta.contains("venció") || respuesta.contains("retir")) {
+                JOptionPane.showMessageDialog(this, respuesta);
+            }
 
         } catch (XiangqiException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -350,6 +395,97 @@ public class TableroGUI extends JFrame {
         filaSeleccionada = -1;
         columnaSeleccionada = -1;
         piezaConfirmada = false;
+    }
+
+    private String obtenerUsernamePorColor(String color) {
+        if (color.equalsIgnoreCase("Rojo")) {
+            return partidaMenus.getJugadorRojo().getUsername();
+        }
+
+        return partidaMenus.getJugadorNegro().getUsername();
+    }
+
+    private void actualizarCapturas() {
+        panelCapturasRojo.removeAll();
+        panelCapturasNegro.removeAll();
+
+        JLabel lblRojo = crearLabelInfo();
+        lblRojo.setText("Rojo:");
+
+        JLabel lblNegro = crearLabelInfo();
+        lblNegro.setText("Negro:");
+
+        panelCapturasRojo.add(lblRojo);
+        agregarIconosCapturas(panelCapturasRojo, "Rojo");
+
+        panelCapturasNegro.add(lblNegro);
+        agregarIconosCapturas(panelCapturasNegro, "Negro");
+
+        panelCapturasRojo.revalidate();
+        panelCapturasRojo.repaint();
+        panelCapturasNegro.revalidate();
+        panelCapturasNegro.repaint();
+    }
+
+    private void agregarIconosCapturas(JPanel panel, String color) {
+        String[] piezas = {"Canon", "Caballo", "Carro", "Elefante", "Oficial", "General", "Soldado"};
+
+        for (int i = 0; i < piezas.length; i++) {
+            String nombre = piezas[i];
+            int total = obtenerTotalInicial(nombre);
+            int actuales = contarPiezasActuales(color, nombre);
+            int capturadas = total - actuales;
+
+            JLabel lbl = new JLabel("(" + capturadas + "/" + total + ")");
+            lbl.setForeground(Color.WHITE);
+            lbl.setFont(new Font("Open Sans", Font.PLAIN, 13));
+
+            ImageIcon icono = cargarImagenPieza(obtenerNombreArchivoPieza(nombre, color), 22, 22);
+            lbl.setIcon(icono);
+
+            panel.add(lbl);
+        }
+    }
+
+    private int contarPiezasActuales(String color, String nombre) {
+        Pieza[][] tablero = partidaXiangqi.getTablero();
+        int contador = 0;
+
+        for (int fila = 0; fila < 10; fila++) {
+            for (int columna = 0; columna < 9; columna++) {
+                Pieza pieza = tablero[fila][columna];
+
+                if (pieza != null
+                        && pieza.getColor().equalsIgnoreCase(color)
+                        && pieza.getNombre().equalsIgnoreCase(nombre)) {
+                    contador++;
+                }
+            }
+        }
+
+        return contador;
+    }
+
+    private int obtenerTotalInicial(String nombre) {
+        if (nombre.equalsIgnoreCase("Soldado")) {
+            return 5;
+        }
+
+        if (nombre.equalsIgnoreCase("General")) {
+            return 1;
+        }
+
+        return 2;
+    }
+
+    private String obtenerNombreArchivoPieza(String nombre, String color) {
+        String nombreArchivo = nombre.toLowerCase();
+
+        if (nombreArchivo.equals("carro")) {
+            nombreArchivo = "carroguerra";
+        }
+
+        return nombreArchivo + "_" + color.toLowerCase() + ".png";
     }
 
     private void pintarPiezasIniciales() {
