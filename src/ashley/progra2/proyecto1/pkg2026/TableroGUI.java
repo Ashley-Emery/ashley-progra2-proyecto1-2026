@@ -366,6 +366,12 @@ public class TableroGUI extends JFrame {
 
             if (respuesta.contains("venció") || respuesta.contains("retir")) {
                 JOptionPane.showMessageDialog(this, respuesta);
+
+                if (menusGUI != null) {
+                    menusGUI.mostrarRankingJugadores();
+                }
+
+                dispose();
             }
 
         } catch (XiangqiException e) {
