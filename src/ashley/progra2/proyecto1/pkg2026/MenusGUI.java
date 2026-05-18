@@ -1008,7 +1008,7 @@ public class MenusGUI extends JFrame {
         tituloJuego.setForeground(Color.WHITE);
         tituloJuego.setFont(new Font("Open Sans", Font.BOLD, 42));
 
-        JLabel titulo = new JLabel("Descargar logs");
+        JLabel titulo = new JLabel("Registro de logs");
         titulo.setForeground(new Color(0xffd600));
         titulo.setFont(new Font("Open Sans", Font.BOLD, 30));
 
@@ -1023,13 +1023,20 @@ public class MenusGUI extends JFrame {
         JTable tabla = new JTable(modelo);
         tabla.setFont(new Font("Open Sans", Font.PLAIN, 16));
         tabla.setRowHeight(42);
+        tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
         tabla.getTableHeader().setFont(new Font("Open Sans", Font.BOLD, 16));
         tabla.getTableHeader().setBackground(new Color(0xa93407));
         tabla.getTableHeader().setForeground(Color.WHITE);
         tabla.getTableHeader().setPreferredSize(new Dimension(0, 42));
 
+        tabla.getColumnModel().getColumn(0).setPreferredWidth(190);
+        tabla.getColumnModel().getColumn(1).setPreferredWidth(750);
+
         JScrollPane scrollTabla = new JScrollPane(tabla);
         scrollTabla.setPreferredSize(new Dimension(430, 300));
+        scrollTabla.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollTabla.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         JButton btnVolver = crearBotonColor("Volver", new Color(0xec9c0d));
 
